@@ -10,12 +10,10 @@ import (
 
 var ErrInvalidString = errors.New("invalid string")
 
-func Unpack(s string) (string, error) {
+func Unpack(sr string) (string, error) {
 
-	sr := []rune(s)
-	var current_char strings.Builder
+	var last_char strings.Builder
 	var full_string strings.Builder
-	// var current_pos int
 
 	for pos, char := range sr {
 
@@ -23,18 +21,26 @@ func Unpack(s string) (string, error) {
 			return "", ErrInvalidString
 		}
 
-		if unicode.IsLetter(char) {
-			current_char.WriteRune(char)
-			full_string.WriteString(current_char.String())
+		if unicode.IsLetter(char) && len(last_char.String()) == 0 {
+			last_char.WriteString(string(char))
+			full_string.WriteString(string(char))
+			continue
+		}
+
+		if unicode.IsLetter(char) && len(last_char.String()) > 0 {
+			last_char.Reset()
+			last_char.WriteString(string(char))
+			full_string.WriteString(string(char))
 			continue
 		}
 
 		if unicode.IsDigit(char) {
 			y, _ := strconv.Atoi(string(char))
 
-			for i := 0; i < y; i++ {
-				full_string.WriteString(current_char.String())
-			current_char.Reset()
+			for i := 1; i < y; i++ {
+				full_string.WriteString(last_char.String())
+			}
+			last_char.Reset()
 			continue
 		}
 
@@ -44,9 +50,9 @@ func Unpack(s string) (string, error) {
 }
 
 func main() {
-	a, err := Unpack("ab")
-	fmt.Print(a)
+	a, err := Unpack("ab3a3c6")
+	fmt.Println(a)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 	}
 }
