@@ -25,6 +25,7 @@ func Unpack(s string) (string, error) {
 
 		if unicode.IsLetter(char) {
 			current_char.WriteRune(char)
+			full_string.WriteString(current_char.String())
 			continue
 		}
 
@@ -33,8 +34,6 @@ func Unpack(s string) (string, error) {
 
 			for i := 0; i < y; i++ {
 				full_string.WriteString(current_char.String())
-				full_string.WriteString(current_char.String())
-			}
 			current_char.Reset()
 			continue
 		}
