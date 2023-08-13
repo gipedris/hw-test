@@ -2,7 +2,6 @@ package hw02unpackstring
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -59,12 +58,4 @@ func Unpack(s string) (string, error) {
 	}
 
 	return fullString.String(), nil
-}
-
-func main() {
-	a, err := Unpack("абоба0")
-	fmt.Println(a)
-	if err != nil {
-		fmt.Println(err)
-	}
 }
