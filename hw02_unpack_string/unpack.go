@@ -2,6 +2,7 @@ package hw02unpackstring
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -9,27 +10,26 @@ import (
 
 var ErrInvalidString = errors.New("invalid string")
 
-func Unpack(sr string) (string, error) {
-	var lastChar strings.Builder
+func Unpack(s string) (string, error) {
+	var lastChar rune
 	var fullString strings.Builder
 	var lastCharIsDigit bool
 
-	for pos, char := range sr {
-		if unicode.IsDigit(char) && pos == 0 {
+	for _, char := range s {
+		if unicode.IsDigit(char) && lastChar == 0 {
 			return "", ErrInvalidString
 		}
 
-		if unicode.IsLetter(char) && len(lastChar.String()) == 0 {
-			lastChar.WriteString(string(char))
-			fullString.WriteString(string(char))
+		if unicode.IsLetter(char) && lastChar == 0 {
+			lastChar = char
+			fullString.WriteRune(char)
 			lastCharIsDigit = false
 			continue
 		}
 
-		if unicode.IsLetter(char) && len(lastChar.String()) > 0 {
-			lastChar.Reset()
-			lastChar.WriteString(string(char))
-			fullString.WriteString(string(char))
+		if unicode.IsLetter(char) && lastChar != 0 {
+			lastChar = char
+			fullString.WriteRune(char)
 			lastCharIsDigit = false
 			continue
 		}
@@ -38,26 +38,33 @@ func Unpack(sr string) (string, error) {
 			return "", ErrInvalidString
 		}
 
-		if unicode.IsDigit(char) && len(lastChar.String()) > 0 {
+		if unicode.IsDigit(char) && !lastCharIsDigit {
 			y, _ := strconv.Atoi(string(char))
 
 			if y == 0 {
-				str := fullString.String()
-				str = str[:len(str)-1]
+				a := strings.TrimSuffix(fullString.String(), string(lastChar))
 				fullString.Reset()
-				fullString.WriteString(str)
+				fullString.WriteString(a)
 			}
 
 			if y > 0 {
 				for i := 1; i < y; i++ {
-					fullString.WriteString(lastChar.String())
+					fullString.WriteRune(lastChar)
 				}
 			}
-			lastChar.Reset()
+			lastChar = char
 			lastCharIsDigit = true
 			continue
 		}
 	}
 
 	return fullString.String(), nil
+}
+
+func main() {
+	a, err := Unpack("абоба0")
+	fmt.Println(a)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
