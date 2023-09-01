@@ -19,9 +19,10 @@ func Top10(str string) []string {
 		keys = append(keys, key)
 	}
 
-	sort.Strings(keys)
-
 	sort.SliceStable(keys, func(i, j int) bool {
+		if freq[keys[i]] == freq[keys[j]] {
+			return strings.Compare(keys[i], keys[j]) <= 0
+		}
 		return freq[keys[i]] > freq[keys[j]]
 	})
 
