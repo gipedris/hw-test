@@ -128,3 +128,5 @@ func (l *list) MoveToFront(i *ListItem) {
 func NewList() List {
 	return new(list)
 }
+
+//done
